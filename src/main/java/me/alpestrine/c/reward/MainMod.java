@@ -25,38 +25,114 @@ import java.util.UUID;
 
 public class MainMod implements ModInitializer {
 	public static final String ID = "rewards";
-    public static final Logger LOGGER = LoggerFactory.getLogger(ID);
+	public static final Logger LOGGER = LoggerFactory.getLogger(ID);
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Rewards!");
+		LOGGER.info("Rewards Mod Initializing!");
 		CommandRegistrationCallback.EVENT.register(this::register);
 	}
 
-	private void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registryAccess, CommandManager.RegistrationEnvironment environment) {
+	private void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registryAccess,
+			CommandManager.RegistrationEnvironment environment) {
 		for (ConfigType ct : ConfigType.values()) {
-			dispatcher.register(CommandManager.literal(String.format("rewards-reload-%s-config", ct.name().toLowerCase()))
-					.executes(context -> MainServer.execute(() -> execCommand(context, environment, ct))));
+			dispatcher
+					.register(CommandManager.literal(String.format("rewards-reload-%s-config", ct.name().toLowerCase()))
+							.executes(context -> MainServer.execute(() -> execCommand(context, environment, ct))));
 		}
+
+		dispatcher.register(CommandManager.literal("rewards-reset")
+				.requires(source -> source.hasPermissionLevel(2) || environment.integrated)
+				.then(CommandManager.argument("target", EntityArgumentType.player())
+						.executes(context -> {
+							ServerPlayerEntity target = EntityArgumentType.getPlayer(context, "target");
+							me.alpestrine.c.reward.config.objects.JsonPlayerData data = AbstractRewardScreen.dataHandler
+									.getForUUID(target.getUuid());
+
+							// Ponemos todo a cero
+							data.currentStreak = 0;
+							data.playtimeSeconds = 0;
+							data.claimedDaily.clear();
+							data.claimedPlaytime.clear();
+							data.lastRewardTime = 0;
+
+							// Guardamos y actualizamos la pantalla si la tiene abierta
+							MainServer.configHandlerThread.execute(AbstractRewardScreen.dataHandler::writeCurrentValue);
+							MainMod.refreshIfRewardScreen(target);
+
+							context.getSource().sendMessage(
+									Text.translatable("commands.rewards.reset.success", target.getName().getString()));
+							return 1;
+						})));
+
+		dispatcher.register(CommandManager.literal("rewards-setstreak")
+				.requires(source -> source.hasPermissionLevel(2) || environment.integrated)
+				.then(CommandManager.argument("target", EntityArgumentType.player())
+						.then(CommandManager
+								.argument("streak", com.mojang.brigadier.arguments.IntegerArgumentType.integer(0))
+								.executes(context -> {
+									ServerPlayerEntity target = EntityArgumentType.getPlayer(context, "target");
+									int newStreak = com.mojang.brigadier.arguments.IntegerArgumentType
+											.getInteger(context, "streak");
+									me.alpestrine.c.reward.config.objects.JsonPlayerData data = AbstractRewardScreen.dataHandler
+											.getForUUID(target.getUuid());
+
+									data.currentStreak = newStreak;
+
+									MainServer.configHandlerThread
+											.execute(AbstractRewardScreen.dataHandler::writeCurrentValue);
+									MainMod.refreshIfRewardScreen(target);
+
+									context.getSource()
+											.sendMessage(Text.translatable("commands.rewards.setstreak.success",
+													target.getName().getString(), newStreak));
+									return 1;
+								}))));
+
+		dispatcher.register(CommandManager.literal("rewards-setplaytime")
+				.requires(source -> source.hasPermissionLevel(2) || environment.integrated)
+				.then(CommandManager.argument("target", EntityArgumentType.player())
+						.then(CommandManager
+								.argument("seconds", com.mojang.brigadier.arguments.IntegerArgumentType.integer(0))
+								.executes(context -> {
+									ServerPlayerEntity target = EntityArgumentType.getPlayer(context, "target");
+									int newSeconds = com.mojang.brigadier.arguments.IntegerArgumentType
+											.getInteger(context, "seconds");
+									me.alpestrine.c.reward.config.objects.JsonPlayerData data = AbstractRewardScreen.dataHandler
+											.getForUUID(target.getUuid());
+
+									data.playtimeSeconds = newSeconds;
+
+									MainServer.configHandlerThread
+											.execute(AbstractRewardScreen.dataHandler::writeCurrentValue);
+									MainMod.refreshIfRewardScreen(target);
+
+									context.getSource()
+											.sendMessage(Text.translatable("commands.rewards.setplaytime.success",
+													target.getName().getString(), newSeconds));
+									return 1;
+								}))));
 
 		String rewardScreenEntity = "rewards-screen-entity";
 		dispatcher.register(CommandManager.literal(rewardScreenEntity)
 				.then(CommandManager.literal("add")
-					.then((CommandManager.argument("targets", EntityArgumentType.entities())
-					.executes(context -> doScreenEntity(context, environment, ScreenEntityAction.Added, EntityArgumentType.getEntity(context, "targets")))))));
+						.then((CommandManager.argument("targets", EntityArgumentType.entities())
+								.executes(context -> doScreenEntity(context, environment, ScreenEntityAction.Added,
+										EntityArgumentType.getEntity(context, "targets")))))));
 
 		dispatcher.register(CommandManager.literal(rewardScreenEntity)
 				.then(CommandManager.literal("remove")
-					.then(CommandManager.argument("targets", EntityArgumentType.entities())
-					.executes(context -> doScreenEntity(context, environment, ScreenEntityAction.Removed, EntityArgumentType.getEntity(context, "targets"))))));
+						.then(CommandManager.argument("targets", EntityArgumentType.entities())
+								.executes(context -> doScreenEntity(context, environment, ScreenEntityAction.Removed,
+										EntityArgumentType.getEntity(context, "targets"))))));
 	}
 
-	private int doScreenEntity(CommandContext<ServerCommandSource> context, CommandManager.RegistrationEnvironment environment, ScreenEntityAction action, Entity entity) {
+	private int doScreenEntity(CommandContext<ServerCommandSource> context,
+			CommandManager.RegistrationEnvironment environment, ScreenEntityAction action, Entity entity) {
 		ServerCommandSource scs = context.getSource();
 		UUID uuid;
 		if (entity == null || (uuid = entity.getUuid()) == null) {
-			String str = entity == null ? "Entity is null" : "Entity UUID is null";
-			scs.sendError(Text.of(str));
+			scs.sendError(Text.translatable("commands.rewards.error.entity_null"));
 			return 0;
 		}
 		if (scs.hasPermissionLevel(2) || environment.integrated) {
@@ -65,50 +141,64 @@ public class MainMod implements ModInitializer {
 				case Removed -> MainServer.screenEntities.remove(uuid);
 			};
 			if (!bl) {
-				scs.sendError(Text.of(switch (action) {
-					case Added -> String.format("UUID %s already added to screen entities", uuid);
-					case Removed -> String.format("UUID %s is not a screen entity", uuid);
-				}));
+				scs.sendError(Text.translatable(switch (action) {
+					case Added -> "commands.rewards.screen_entity.already_added";
+					case Removed -> "commands.rewards.screen_entity.not_found";
+				}, uuid.toString()));
 
 			} else {
-				scs.sendMessage(Text.of(String.format("Successfully %s UUID: %s", action.name(), uuid)));
+				scs.sendMessage(Text.translatable(switch (action) {
+					case Added -> "commands.rewards.screen_entity.added";
+					case Removed -> "commands.rewards.screen_entity.removed";
+				}, uuid.toString()));
 			}
-
 
 			MainServer.configHandlerThread.execute(MainServer.globalConfigHandler::writeCurrentValue);
 		} else {
-			scs.sendError(Text.of("No permission!"));
+			scs.sendError(Text.translatable("commands.rewards.error.no_permission"));
 		}
 		return 0;
 	}
 
-	public enum ScreenEntityAction {Added, Removed}
+	public enum ScreenEntityAction {
+		Added, Removed
+	}
 
-	private void execCommand(CommandContext<ServerCommandSource> context, CommandManager.RegistrationEnvironment environment, ConfigType type) {
+	private void execCommand(CommandContext<ServerCommandSource> context,
+			CommandManager.RegistrationEnvironment environment, ConfigType type) {
 		ServerCommandSource scs = context.getSource();
 		if (scs.hasPermissionLevel(2) || environment.integrated) {
 			try {
-				scs.sendMessage(Text.of(String.format((switch (type) {
+				boolean reloaded = (switch (type) {
 					case Daily -> DailyScreen.dailyHandler;
 					case Playtime -> PlaytimeScreen.playtimeHandler;
 					case PlayerData -> AbstractRewardScreen.dataHandler;
 					case Global -> MainServer.globalConfigHandler;
-				}).reload() ? "Successfully reloaded %s config!" : "Config file for %s didn't exist or was empty, default config was saved to disk.", type.name())));
+				}).reload();
+
+				if (reloaded) {
+					scs.sendMessage(Text.translatable("commands.rewards.reload.success", type.name()));
+				} else {
+					scs.sendMessage(Text.translatable("commands.rewards.reload.default", type.name()));
+				}
 				scs.getServer().getPlayerManager().getPlayerList().forEach(MainMod::refreshIfRewardScreen);
 			} catch (Exception e) {
-				scs.sendMessage(Text.of(String.format("Failed to reload %s config, check logs for error.", type.name())));
+				scs.sendMessage(Text.translatable("commands.rewards.reload.failed", type.name()));
 				e.printStackTrace(System.err);
 			}
 		} else {
-			scs.sendError(Text.of("No permission!"));
+			scs.sendError(Text.translatable("commands.rewards.error.no_permission"));
 		}
 	}
 
 	public static void refreshIfRewardScreen(ServerPlayerEntity spe) {
-		if (spe.currentScreenHandler instanceof CustomScreenHandler csh && csh.getInventory() instanceof AbstractACScreen aacs) {
+		if (spe.currentScreenHandler instanceof CustomScreenHandler csh
+				&& csh.getInventory() instanceof AbstractACScreen aacs) {
 			aacs.refresh(spe);
 		}
 	}
 
-	public enum ConfigType {Daily, Playtime, Global, PlayerData}
+	public enum ConfigType {
+		Daily, Playtime, Global, PlayerData
+	}
 }

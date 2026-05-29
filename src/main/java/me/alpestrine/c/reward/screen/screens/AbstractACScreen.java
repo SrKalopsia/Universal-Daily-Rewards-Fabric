@@ -35,7 +35,6 @@ public abstract class AbstractACScreen extends AbstractButtonHolder implements I
         addButtons(viewer);
     }
 
-
     public ACButton setButton(int index, ACButton button) {
         return setButton(getPage(), index, button);
     }
@@ -57,7 +56,8 @@ public abstract class AbstractACScreen extends AbstractButtonHolder implements I
     @Override
     public boolean isEmpty() {
         for (ItemStack itemStack : heldStacks) {
-            if (itemStack.isEmpty()) continue;
+            if (itemStack.isEmpty())
+                continue;
             return false;
         }
         return true;
@@ -103,7 +103,8 @@ public abstract class AbstractACScreen extends AbstractButtonHolder implements I
 
     @Override
     public Text getDisplayName() {
-        return Text.of(getName());
+        // AHORA DEVUELVE EL TEXTO TRADUCIBLE DIRECTAMENTE
+        return getName();
     }
 
     protected void fillEmpty() {
@@ -118,7 +119,8 @@ public abstract class AbstractACScreen extends AbstractButtonHolder implements I
 
     protected abstract void addButtons(ServerPlayerEntity viewer);
 
-    public abstract String getName();
+    // CAMBIADO DE String A Text
+    public abstract Text getName();
 
     @Override
     public @Nullable ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {

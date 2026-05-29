@@ -8,11 +8,9 @@ import me.alpestrine.c.reward.screen.button.ItemBuilder;
 import me.alpestrine.c.reward.screen.screens.AbstractACScreen;
 import me.alpestrine.c.reward.screen.screens.SelectionScreen;
 import me.alpestrine.c.reward.server.MainServer;
-import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -26,10 +24,10 @@ public abstract class AbstractRewardScreen extends AbstractACScreen {
     public static final Item alreadyClaimed = Items.GREEN_STAINED_GLASS_PANE;
     public static final Item cannotBeClaimed = Items.RED_STAINED_GLASS_PANE;
 
-    public static final Item backItem = Items.RED_CONCRETE;
-    public static final Item prevItem = Items.BLUE_CONCRETE;
-    public static final Item nextItem = Items.PURPLE_CONCRETE;
-    public static final Item invalidItem = Items.GRAY_CONCRETE;
+    public static final Item backItem = Items.COMPASS;
+    public static final Item prevItem = Items.OAK_SIGN;
+    public static final Item nextItem = Items.OAK_SIGN;
+    public static final Item invalidItem = Items.GRAY_STAINED_GLASS_PANE;
 
     protected static final int maxSlot = 16;
     protected static final int minSlot = 10;
@@ -55,7 +53,7 @@ public abstract class AbstractRewardScreen extends AbstractACScreen {
     }
 
     protected int getMaxPage() {
-        return Math.max(1, elementAmount() / 6);
+        return (int) Math.ceil((double) elementAmount() / 7.0);
     }
 
     protected abstract Map<? extends Number, ? extends JsonBaseReward<?>> getRewards();
@@ -73,15 +71,22 @@ public abstract class AbstractRewardScreen extends AbstractACScreen {
     protected void fillEmpty() {
         super.fillEmpty();
 
-        setButton(18, ItemBuilder.start(backItem).name("Main Page").button(event -> event.player.openHandledScreen(new SelectionScreen())));
+        setButton(18, ItemBuilder.start(backItem).name(Text.translatable("gui.rewards.back_button"))
+                .button(event -> event.player.openHandledScreen(new SelectionScreen())));
 
         int prev = getPage() - 1;
         boolean canPrev = canSetPageTo(prev);
-        setButton(25, ItemBuilder.start(canPrev ? prevItem : invalidItem).name(canPrev ? "Previous Page: " + prev : "").button(canPrev ? event -> setPageForPlayer(prev, event.player) : null));
+        setButton(25,
+                ItemBuilder.start(canPrev ? prevItem : invalidItem)
+                        .name(canPrev ? Text.translatable("gui.rewards.prev_page", prev) : Text.empty())
+                        .button(canPrev ? event -> setPageForPlayer(prev, event.player) : null));
 
         int next = getPage() + 1;
         boolean canNext = canSetPageTo(next);
-        setButton(26, ItemBuilder.start(canNext ? nextItem : invalidItem).name(canNext ? "Next Page: " + next : "").button(canNext ? event -> setPageForPlayer(next, event.player) : null));
+        setButton(26,
+                ItemBuilder.start(canNext ? nextItem : invalidItem)
+                        .name(canNext ? Text.translatable("gui.rewards.next_page", next) : Text.empty())
+                        .button(canNext ? event -> setPageForPlayer(next, event.player) : null));
     }
 
     private void setPageForPlayer(int page, ServerPlayerEntity viewer) {
@@ -95,34 +100,52 @@ public abstract class AbstractRewardScreen extends AbstractACScreen {
         setPageForPlayer(getPage(), viewer);
     }
 
-    protected String[] getToolTip(List<JsonStack> stacks) {
-        ArrayList<String> tooltips = new ArrayList<>();
+    protected Text[] getToolTip(List<JsonStack> stacks) {
+        ArrayList<Text> tooltips = new ArrayList<>();
         for (JsonStack stack : stacks) {
-            tooltips.add("");
-            tooltips.addAll(stack.toToolTip());
+            tooltips.add(Text.empty());
+            tooltips.addAll(stack.toToolTipText());
         }
-        return tooltips.toArray(new String[0]);
+        return tooltips.toArray(new Text[0]);
     }
 
     protected Item getClaimItem(boolean isClaimed, boolean isClaimable) {
         return isClaimed ? alreadyClaimed : (isClaimable ? canClaim : cannotBeClaimed);
     }
 
-    protected void onClick(boolean isClaimed, boolean isClaimable, ServerPlayerEntity player, JsonPlayerData data, JsonBaseReward<?> jbr, Type type) {
+    protected void onClick(boolean isClaimed, boolean isClaimable, ServerPlayerEntity player, JsonPlayerData data,
+            JsonBaseReward<?> jbr, Type type) {
         if (!isClaimed && isClaimable) {
-            List<ItemStack> stacks = jbr.getRewardItems().stream().map(JsonStack::toItemStack).toList();
-            int empty = 0;
-            for (ItemStack iStack : player.getInventory().main) {
-                if (!iStack.isEmpty()) continue;
-                empty++;
+            List<ItemStack> stacks = jbr.getRewardItems().stream()
+                    .filter(JsonStack::isGiveItem)
+                    .map(JsonStack::toItemStack)
+                    .toList();
+
+            if (!stacks.isEmpty()) {
+                int empty = 0;
+                for (ItemStack iStack : player.getInventory().main) {
+                    if (!iStack.isEmpty())
+                        continue;
+                    empty++;
+                }
+                if (empty < stacks.size()) {
+                    player.sendMessage(Text.translatable("gui.rewards.inventory_full", stacks.size(), empty)
+                            .formatted(Formatting.RED));
+                    return;
+                }
+                for (ItemStack is : stacks) {
+                    player.getInventory().insertStack(is);
+                }
             }
-            if (empty < stacks.size()) {
-                player.sendMessage(Text.empty().append(String.format("Your inventory is too full to receive %s items! You only have %s empty slots.", stacks.size(), empty)).formatted(Formatting.RED));
-                return;
+
+            if (jbr.getCommands() != null && !jbr.getCommands().isEmpty()) {
+                net.minecraft.server.MinecraftServer server = MainServer.server;
+                for (String cmd : jbr.getCommands()) {
+                    String finalCmd = cmd.replace("%player%", player.getName().getString());
+                    server.getCommandManager().executeWithPrefix(server.getCommandSource(), finalCmd);
+                }
             }
-            for (ItemStack is : stacks) {
-                player.getInventory().insertStack(is);
-            }
+
             switch (type) {
                 case Playtime -> data.claimedPlaytime.add(jbr.getId());
                 case Daily -> data.claimedDaily.add(jbr.getId());
@@ -132,5 +155,7 @@ public abstract class AbstractRewardScreen extends AbstractACScreen {
         }
     }
 
-    public enum Type{Playtime, Daily}
+    public enum Type {
+        Playtime, Daily
+    }
 }

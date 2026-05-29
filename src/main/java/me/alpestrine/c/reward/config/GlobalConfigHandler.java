@@ -1,17 +1,33 @@
 package me.alpestrine.c.reward.config;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import me.alpestrine.c.reward.config.objects.JsonGlobal;
 import me.alpestrine.c.reward.server.MainServer;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class GlobalConfigHandler implements BasicConfigReader<Void, Void> {
-    private JsonArray value = new JsonArray();
 
     @Override
     public JsonArray getJson() {
-        return value.deepCopy();
+        // PARCHE: Ahora lee los datos en vivo del servidor en lugar de usar una caché
+        // vacía
+        JsonArray ja = new JsonArray();
+        JsonObject jo = new JsonObject();
+
+        jo.addProperty("millisecondsInDay", MainServer.millisecondsInDay);
+        jo.addProperty("updateTickTime", MainServer.ticksPerUpdate);
+
+        JsonArray entitiesJa = new JsonArray();
+        for (UUID uuid : MainServer.screenEntities) {
+            entitiesJa.add(uuid.toString());
+        }
+        jo.add("screenentity", entitiesJa);
+
+        ja.add(jo);
+        return ja;
     }
 
     @Override
@@ -21,16 +37,11 @@ public class GlobalConfigHandler implements BasicConfigReader<Void, Void> {
 
     @Override
     public String getDefault() {
-        /*JsonArray ja = new JsonArray();
-        ja.add(new JsonGlobal().toJson());
-        return gson.toJson(ja);*/
-
         return readStringFromAsset("config/global.json");
     }
 
     @Override
     public void setJson(JsonArray ja) {
-        this.value = ja;
         JsonGlobal global;
         if (ja.isEmpty()) {
             global = new JsonGlobal();

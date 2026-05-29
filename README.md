@@ -11,7 +11,6 @@ Commands:
 Contributions are appreciated, as there are many bugs.
 Known ones:
 - Members get daily rewards for days they didn't log on on.
-- Must add the vote entity after every restart.
 - A console error comes in every now in then in server console:
 
 Error:

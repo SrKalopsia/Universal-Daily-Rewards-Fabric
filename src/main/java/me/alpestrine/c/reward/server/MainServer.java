@@ -32,6 +32,7 @@ public class MainServer {
     public static HashSet<UUID> screenEntities = new HashSet<>();
     private static int lastSave;
     public static MinecraftServer server;
+
     public static void onInit(Object object) {
         server = (MinecraftServer) object;
         DailyScreen.dailyHandler.onInit();
@@ -45,7 +46,8 @@ public class MainServer {
         return 0;
     }
 
-    public static void handleClick(ScreenHandler sh, int slotIndex, int button, SlotActionType actionType, PlayerEntity player, CallbackInfo ci) {
+    public static void handleClick(ScreenHandler sh, int slotIndex, int button, SlotActionType actionType,
+            PlayerEntity player, CallbackInfo ci) {
         try {
             if (!(player instanceof ServerPlayerEntity spe)) {
                 return;
@@ -53,7 +55,17 @@ public class MainServer {
             if (sh instanceof CustomScreenHandler) {
                 ci.cancel();
             }
-            Inventory inventory = slotIndex == ScreenHandler.EMPTY_SPACE_SLOT_INDEX ? player.getInventory() : sh.slots.get(slotIndex).inventory;
+
+            // --- INICIO DE LA VALIDACIÓN AÑADIDA ---
+            // Si el índice es menor a 0 y no es un clic fuera del inventario (EMPTY_SPACE),
+            // lo ignoramos.
+            if (slotIndex < 0 && slotIndex != ScreenHandler.EMPTY_SPACE_SLOT_INDEX) {
+                return;
+            }
+            // --- FIN DE LA VALIDACIÓN AÑADIDA ---
+
+            Inventory inventory = slotIndex == ScreenHandler.EMPTY_SPACE_SLOT_INDEX ? player.getInventory()
+                    : sh.slots.get(slotIndex).inventory;
             InventoryEvent ie = new InventoryEvent(slotIndex, button, actionType, inventory, spe);
             if (inventory instanceof AbstractACScreen s) {
                 s.onClick(ie);
@@ -70,14 +82,43 @@ public class MainServer {
         TickExecutor.currentTick.set(tect);
         if (tect >= lastSave + ticksPerUpdate) {
             boolean toUpdate = false;
+            long currentTime = System.currentTimeMillis();
+
             for (ServerPlayerEntity spe : MainServer.server.getPlayerManager().getPlayerList()) {
                 JsonPlayerData join = AbstractRewardScreen.dataHandler.getForUUID(spe.getUuid());
-                if (join.currentStreak == 0 || join.lastRewardTime + millisecondsInDay < System.currentTimeMillis()) {// logged in after one day
-                    join.currentStreak++;
-                    join.lastRewardTime = System.currentTimeMillis();
+
+                // 1. Pérdida de racha por inactividad (>48 horas)
+                if (join.currentStreak > 0 && currentTime > join.lastRewardTime + (millisecondsInDay * 2L)) {
+                    join.currentStreak = 0;
+                    join.claimedDaily.clear();
                 }
+
+                // 2. Aumento de racha al pasar 24 horas (o entrar por primera vez)
+                if (join.currentStreak == 0 || join.lastRewardTime + millisecondsInDay < currentTime) {
+                    join.currentStreak++;
+
+                    // --- NUEVA LÓGICA DE LOOP (REINICIO AUTOMÁTICO) ---
+                    // Buscamos cuál es el último día configurado en daily.json
+                    int maxDay = 0;
+                    for (Integer day : DailyScreen.dailyHandler.getItems().keySet()) {
+                        if (day > maxDay) {
+                            maxDay = day;
+                        }
+                    }
+
+                    // Si el jugador entra y su racha supera el último día, empieza el ciclo de
+                    // nuevo
+                    if (maxDay > 0 && join.currentStreak > maxDay) {
+                        join.currentStreak = 1;
+                        join.claimedDaily.clear(); // Resetea el historial de reclamados
+                    }
+                    // ---------------------------------------------------
+
+                    join.lastRewardTime = currentTime;
+                }
+
                 join.playtimeSeconds += ticksPerUpdate / 20;
-                join.lastJoin = System.currentTimeMillis();
+                join.lastJoin = currentTime;
                 MainMod.refreshIfRewardScreen(spe);
                 toUpdate = true;
             }
