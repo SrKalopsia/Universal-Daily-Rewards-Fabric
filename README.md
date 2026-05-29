@@ -1,6 +1,10 @@
 # Cobbleverse Daily Rewards Fabric
 
+![Version](https://img.shields.io/badge/version-2.0.0-blue.svg) ![Minecraft](https://img.shields.io/badge/minecraft-1.21-green.svg) ![License](https://img.shields.io/badge/license-MIT-yellow.svg) ![Platform](https://img.shields.io/badge/platform-Fabric-orange.svg)
+
 A fully functional, bilingual, and heavily optimized fork of the original Daily Rewards mod, tailored for modern Fabric servers.
+
+[![Download on Modrinth](https://img.shields.io/badge/Download-Modrinth-1bd96a.svg)](https://modrinth.com/mod/cobbleverse-daily-rewards-fabric/) [![GitHub](https://img.shields.io/badge/GitHub-Source-black.svg)](https://github.com/SrKalopsia/cobbleverse-daily-rewards-fabric)
 
 This mod rewards players for their loyalty and playtime, featuring interactive GUI menus, configurable item/command rewards, and support for complex modpack ecosystems.
 
