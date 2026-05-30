@@ -10,6 +10,7 @@ While this fork has been redesigned, translated, and optimized with the **Cobble
 
 ### ✨ New Features & Improvements
 * 🌍 **Native Localization Support (i18n):** GUI texts are no longer hardcoded. The mod now includes native, dynamic support for English (`en_us`) and Spanish (`es_es`, `es_mx`), automatically adapting to the player's client language.
+* * GUI translations will work flawlessly if you drop the provided lang files into your server's custom Resource Pack, otherwise client-side installation will be required.
 * 🛠️ **New Admin Commands:** Added the `/rewards-setplaytime <player> <seconds>` command to allow administrators to manually adjust a player's tracked playtime, making server management and user support much easier.
 * ⚙️ **Generic Configurations:** The mod now generates much cleaner, universal default configuration files (`daily.json` and `playtime.json`) right out of the box, ready for a "Plug & Play" experience.
 
