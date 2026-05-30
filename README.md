@@ -1,6 +1,6 @@
 # Cobbleverse Daily Rewards Fabric
 
-![Version](https://img.shields.io/badge/version-2.0.0-blue.svg) ![Minecraft](https://img.shields.io/badge/minecraft-1.21-green.svg) ![License](https://img.shields.io/badge/license-MIT-yellow.svg) ![Platform](https://img.shields.io/badge/platform-Fabric-orange.svg)
+![Version](https://img.shields.io/badge/version-3.0.0-blue.svg) ![Minecraft](https://img.shields.io/badge/minecraft-1.21-green.svg) ![License](https://img.shields.io/badge/license-MIT-yellow.svg) ![Platform](https://img.shields.io/badge/platform-Fabric-orange.svg)
 
 This release marks a complete evolution and total overhaul from version 1.0.0 of the original `daily-rewards-fabric` mod.
 
@@ -10,7 +10,8 @@ While this fork has been redesigned, translated, and optimized with the **Cobble
 
 ### ✨ New Features & Improvements
 
-* 🌍 **Native Localization Support (i18n):** GUI texts are no longer hardcoded. The mod now includes native, dynamic support for English (`en_us`) and Spanish (`es_es`, `es_mx`), automatically adapting to the player's client language.
+* 🚀 **100% Server-Side (Polymer):** The mod is now fully server-side. Players do not need to install the mod to see the GUIs or interact with the rewards system.
+* 🌍 **Native Localization Support (i18n):** GUI texts are no longer hardcoded. Using the **Server Translations API**, the mod now automatically adapts to the player's client language without requiring any client-side resource packs.
 * 🛠️ **New Admin Commands:** Added the `/rewards-setplaytime <player> <seconds>` command to allow administrators to manually adjust a player's tracked playtime, making server management and user support much easier.
 * ⚙️ **Generic Configurations:** The mod now generates much cleaner, universal default configuration files (`daily.json` and `playtime.json`) right out of the box, ready for a "Plug & Play" experience.
 
@@ -38,7 +39,6 @@ Several severe bugs present in the original version have been patched:
 * `/rewards-screen-entity remove <entity>` - Unregisters a screen entity.
 
 ## ⚙️ Configuration Example & Flexibility
-
 Curious about how customizable this is? The mod uses a clean, intuitive JSON structure that gives you total freedom over how rewards are distributed. You can mix and match two methods:
 
 * **Method 1 (Via Commands):** Perfect for virtual economy (like *Cobbledollars*), permissions, or complex items with NBT/Lore. You run the command in the background and set `"give_item": false` so the GUI item only acts as a visual icon.
@@ -71,10 +71,8 @@ Here is a quick sneak peek of how a daily reward is configured using both method
   }
 ]
 ```
-
-> 📄 **Want to see the full potential?**
+> 📄 **Want to see the full potential?** 
 > Check out the complete default configurations on our GitHub:
->
 > * [View default daily.json](https://github.com/SrKalopsia/cobbleverse-daily-rewards-fabric/blob/main/src/main/resources/config/daily.json)
 > * [View default playtime.json](https://github.com/SrKalopsia/cobbleverse-daily-rewards-fabric/blob/main/src/main/resources/config/playtime.json)
 
