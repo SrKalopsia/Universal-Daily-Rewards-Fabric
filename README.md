@@ -1,12 +1,14 @@
 # Cobbleverse Daily Rewards Fabric
 
-![Version](https://img.shields.io/badge/version-3.0.0-blue.svg) ![Minecraft](https://img.shields.io/badge/minecraft-1.21-green.svg) ![License](https://img.shields.io/badge/license-MIT-yellow.svg) ![Platform](https://img.shields.io/badge/platform-Fabric-orange.svg)
+![Version](https://img.shields.io/badge/version-3.0.1-blue.svg) ![Minecraft](https://img.shields.io/badge/minecraft-1.21-green.svg) ![License](https://img.shields.io/badge/license-MIT-yellow.svg) ![Platform](https://img.shields.io/badge/platform-Fabric-orange.svg)
 
 This release marks a complete evolution and total overhaul from version 1.0.0 of the original `daily-rewards-fabric` mod.
 
 [![Download on Modrinth](https://img.shields.io/badge/Download-Modrinth-1bd96a.svg)](https://modrinth.com/mod/cobbleverse-daily-rewards) [![GitHub](https://img.shields.io/badge/GitHub-Source-black.svg)](https://github.com/SrKalopsia/cobbleverse-daily-rewards-fabric)
 
 While this fork has been redesigned, translated, and optimized with the **Cobbleverse** ecosystem in mind, **it is 100% standalone and can be used on any Fabric server or modpack.**
+
+📖 **[Click here to read the full CHANGELOG](CHANGELOG.md)**
 
 ### ✨ New Features & Improvements
 
