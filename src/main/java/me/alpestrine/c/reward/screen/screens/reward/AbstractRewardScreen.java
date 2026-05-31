@@ -101,11 +101,13 @@ public abstract class AbstractRewardScreen extends AbstractACScreen {
         setPageForPlayer(getPage(), viewer);
     }
 
-    protected Text[] getToolTip(List<JsonStack> stacks) {
+    protected Text[] getToolTip(List<JsonStack> stacks, ServerPlayerEntity viewer) {
         ArrayList<Text> tooltips = new ArrayList<>();
         for (JsonStack stack : stacks) {
             tooltips.add(Text.empty());
-            tooltips.addAll(stack.toToolTipText());
+            for (Text t : stack.toToolTipText()) {
+                tooltips.add(MainMod.t(t, viewer));
+            }
         }
         return tooltips.toArray(new Text[0]);
     }

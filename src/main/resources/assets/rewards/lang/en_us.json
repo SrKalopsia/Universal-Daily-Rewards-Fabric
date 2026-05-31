@@ -24,5 +24,11 @@
     "gui.rewards.playtime.required": "Required time: %s",
     "gui.rewards.selection.title": "Rewards",
     "gui.rewards.daily.title": "Daily Rewards",
-    "gui.rewards.playtime.title": "Playtime Rewards"
+    "gui.rewards.playtime.title": "Playtime Rewards",
+    "gui.rewards.time.day": "%s day",
+    "gui.rewards.time.days": "%s days",
+    "gui.rewards.time.hour": "%s hour",
+    "gui.rewards.time.hours": "%s hours",
+    "gui.rewards.time.minute": "%s minute",
+    "gui.rewards.time.minutes": "%s minutes"
 }

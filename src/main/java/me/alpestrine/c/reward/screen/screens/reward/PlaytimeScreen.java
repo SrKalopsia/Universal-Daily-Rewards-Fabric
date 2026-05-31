@@ -50,7 +50,7 @@ public class PlaytimeScreen extends AbstractRewardScreen {
             setButton(currentPage, sl, ItemBuilder.start(getClaimItem(isClaimed, isClaimable))
                     .name(MainMod.t(Text.translatable("gui.rewards.playtime.required",
                             TimeFormatter.format(IMath.round(seconds / 60, 3))), viewer))
-                    .tooltip(getToolTip(jpr.getRewardItems()))
+                    .tooltip(getToolTip(jpr.getRewardItems(), viewer))
                     .button(event -> onClick(isClaimed, isClaimable, event.player, data, jpr, Type.Playtime)));
         }
     }

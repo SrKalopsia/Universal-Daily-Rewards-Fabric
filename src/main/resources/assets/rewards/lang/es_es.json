@@ -24,5 +24,11 @@
     "gui.rewards.playtime.required": "Tiempo requerido: %s",
     "gui.rewards.selection.title": "Recompensas",
     "gui.rewards.daily.title": "Recompensas Diarias",
-    "gui.rewards.playtime.title": "Tiempo de Juego"
+    "gui.rewards.playtime.title": "Tiempo de Juego",
+    "gui.rewards.time.day": "%s día",
+    "gui.rewards.time.days": "%s días",
+    "gui.rewards.time.hour": "%s hora",
+    "gui.rewards.time.hours": "%s horas",
+    "gui.rewards.time.minute": "%s minuto",
+    "gui.rewards.time.minutes": "%s minutos"
 }

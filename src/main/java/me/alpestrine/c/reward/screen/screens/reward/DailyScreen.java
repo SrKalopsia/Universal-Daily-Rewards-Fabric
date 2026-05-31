@@ -49,7 +49,7 @@ public class DailyScreen extends AbstractRewardScreen {
             }
             setButton(currentPage, sl, ItemBuilder.start(getClaimItem(isClaimed, isClaimable))
                     .name(MainMod.t(Text.translatable("gui.rewards.daily.day", reqTrek), viewer))
-                    .tooltip(getToolTip(jpr.getRewardItems()))
+                    .tooltip(getToolTip(jpr.getRewardItems(), viewer))
                     .button(event -> onClick(isClaimed, isClaimable, event.player, data, jpr, Type.Daily)));
         }
     }

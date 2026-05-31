@@ -1,15 +1,33 @@
 package me.alpestrine.c.reward.util;
 
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+
 public interface TimeFormatter {
-    static String format(int minutes) {
-        int hours = minutes / 60;
-        minutes = (int) Math.floor(minutes % 60D);
-        String format = "";
-        format += hours > 0 ? String.format("%s hora".concat(hours > 1 ? "s" : ""), hours) : "";
-        if (!format.isEmpty()) {
-            format += ", ";
+    static Text format(int minutes) {
+        int days = minutes / 1440;
+        int hours = (minutes % 1440) / 60;
+        int mins = minutes % 60;
+
+        MutableText text = Text.empty();
+        boolean hasPrev = false;
+
+        if (days > 0) {
+            text.append(Text.translatable(days > 1 ? "gui.rewards.time.days" : "gui.rewards.time.day", days));
+            hasPrev = true;
         }
-        format += String.format("%s minuto".concat(minutes > 1 || minutes == 0 ? "s" : ""), minutes);
-        return format;
+
+        if (hours > 0) {
+            if (hasPrev) text.append(Text.literal(", "));
+            text.append(Text.translatable(hours > 1 ? "gui.rewards.time.hours" : "gui.rewards.time.hour", hours));
+            hasPrev = true;
+        }
+
+        if (mins > 0 || !hasPrev) {
+            if (hasPrev) text.append(Text.literal(", "));
+            text.append(Text.translatable(mins > 1 || mins == 0 ? "gui.rewards.time.minutes" : "gui.rewards.time.minute", mins));
+        }
+
+        return text;
     }
 }
