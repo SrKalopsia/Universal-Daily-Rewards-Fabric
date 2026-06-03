@@ -1,6 +1,6 @@
 # Universal Daily Rewards
 
-![Version](https://img.shields.io/badge/version-4.0.0-blue.svg) ![Minecraft](https://img.shields.io/badge/minecraft-1.21.1-green.svg) ![License](https://img.shields.io/badge/license-MIT-yellow.svg) ![Platform](https://img.shields.io/badge/platform-Fabric-orange.svg)
+![Version](https://img.shields.io/badge/version-4.0.0-blue.svg) ![Minecraft](https://img.shields.io/badge/minecraft-1.21.1-green.svg) ![License](https://img.shields.io/badge/license-MIT-yellow.svg) ![Platform](https://img.shields.io/badge/platform-Fabric-orange.svg) ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/SrKalopsia/universal-daily-rewards-fabric/build.yml?label=build)
 
 This release marks a complete evolution and total overhaul from the original `daily-rewards-fabric` mod. Formerly known as Cobbleverse Daily Rewards, version 4.0.0 introduces a universal architecture designed for any Minecraft server.
 
