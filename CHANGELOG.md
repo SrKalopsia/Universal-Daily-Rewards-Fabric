@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.0.0] - 2026-06-02
+
+### Added
+- **Universal Rebranding**: Mod officially renamed to **Universal Daily Rewards**.
+- **Template System**: Introduced a powerful template engine.
+  - New admin command: `/rewards-setup load <template>` (Level 4) to quickly apply pre-configured setups.
+  - Included templates: `vanilla`, `economy`, and `cobbleverse`.
+  - Automatic template export to `config/rewards/templates/` on startup.
+- **Player Access Commands**: Added `/daily` and `/rewards open` for remote GUI access.
+  - Toggleable via the new `allow_player_command` setting in `global.json`.
+- **Internationalized Templates**: Updated default templates to use Minecraft's `translate` keys, allowing reward names to adapt to the player's client language automatically.
+- **Improved UX**: 
+  - Added claim sound effects (`ENTITY_EXPERIENCE_ORB_PICKUP`) for better feedback.
+  - Silent command execution: Server-side reward commands are now executed silently to avoid chat spam.
+- **Looping Streaks**: Daily rewards now automatically reset to Day 1 after reaching the end of the configured list, allowing for infinite racha cycles.
+
+### Changed
+- **Mod Identity**: Visible name updated to "Universal Daily Rewards", internal mod ID remains `rewards` for legacy support.
+- **Global Config Overhaul**: `global.json` now includes `allow_player_command`. The mod automatically migrates old v3 configs to the new v4 format on startup.
+- **Documentation**: Updated README and help strings to reflect the new 4.0.0 architecture.
+
 ## [3.1.0] - 2026-06-01
 
 ### Added
