@@ -51,20 +51,37 @@ The mod directly gives the player the physical item shown in the GUI.
 * The player will receive exactly what they see (amount, enchants, name, lore).
 
 ### Configuration Example:
+The following example shows how you can combine **Translation Keys**, **Custom Text**, and **Command-Based** rewards in a single day:
+
 ```json
 [
   {
     "day": 1,
     "id": "day_1",
     "commands": [
-      "give %player% minecraft:diamond 1"
+      "cobbledollars give %player% 5000",
+      "lp user %player% parent add temporary_vip 1d"
     ],
     "items": [
       {
-        "item": "minecraft:diamond",
-        "name": "{\"translate\":\"item.minecraft.diamond\",\"color\":\"aqua\",\"bold\":true}",
+        "item": "minecraft:emerald",
+        "name": "{\"text\":\"$5,000 Cobbledollars\",\"color\":\"green\",\"bold\":true}",
         "amount": 1,
         "give_item": false
+      },
+      {
+        "item": "minecraft:paper",
+        "name": "{\"text\":\"Temporary VIP (1 Day)\",\"color\":\"gold\"}",
+        "lore": ["{\"text\":\"Grants access to /fly and /feed\",\"color\":\"gray\"}"],
+        "amount": 1,
+        "give_item": false
+      },
+      {
+        "item": "cobblemon:master_ball",
+        "name": "{\"translate\":\"item.cobblemon.master_ball\",\"color\":\"dark_purple\",\"bold\":true}",
+        "amount": 1,
+        "glint": true,
+        "give_item": true
       }
     ]
   }
