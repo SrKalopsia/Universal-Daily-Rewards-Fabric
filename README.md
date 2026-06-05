@@ -4,7 +4,7 @@
 
 This release marks a complete evolution and total overhaul from the original `daily-rewards-fabric` mod. Formerly known as Cobbleverse Daily Rewards, version 4.0.0 introduces a universal architecture designed for any Minecraft server.
 
-[![Download on Modrinth](https://img.shields.io/badge/Download-Modrinth-1bd96a.svg)](https://modrinth.com/mod/cobbleverse-daily-rewards) [![GitHub](https://img.shields.io/badge/GitHub-Source-black.svg)](https://github.com/SrKalopsia/cobbleverse-daily-rewards-fabric)
+[![Download on Modrinth](https://img.shields.io/badge/Download-Modrinth-1bd96a.svg)](https://modrinth.com/mod/universal-daily-rewards) [![GitHub](https://img.shields.io/badge/GitHub-Source-black.svg)](https://github.com/SrKalopsia/cobbleverse-daily-rewards-fabric)
 
 **Universal Daily Rewards** is a 100% standalone, server-side mod that provides a highly configurable rewards system with native localization and a powerful template engine.
 
@@ -36,9 +36,21 @@ This release marks a complete evolution and total overhaul from the original `da
 #### Setup Commands (Permission Level 4)
 * `/rewards-setup load <template>` - Apply a pre-made template (`vanilla`, `economy`, `cobbleverse`).
 
-## ⚙️ Configuration Example
-The mod uses an intuitive JSON structure. Here is a sample of how a daily reward is configured:
+## ⚙️ Configuration & Flexibility
 
+The mod uses an intuitive JSON structure that offers total freedom in how you distribute rewards. You can choose between two main methods (or mix them):
+
+### 1. Command-Based Rewards (Recommended for Economy/Virtual Items)
+Ideal for currency, permissions, or custom items with complex NBT. You run a command in the background and use a visual placeholder in the GUI.
+* Set `"give_item": false` so the GUI item only acts as a visual icon.
+* Add your commands to the `"commands"` array.
+
+### 2. Direct Physical Rewards
+The mod directly gives the player the physical item shown in the GUI.
+* Set `"give_item": true`.
+* The player will receive exactly what they see (amount, enchants, name, lore).
+
+### Configuration Example:
 ```json
 [
   {
