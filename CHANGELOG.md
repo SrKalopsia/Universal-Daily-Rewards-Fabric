@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.0.1] - 2026-06-07
+
+### Added
+- **Native Localization**: Added native Korean translation (`ko_kr`) thanks to the contribution of @Kakaka999.
+
 ## [4.0.0] - 2026-06-02
 
 ### Added

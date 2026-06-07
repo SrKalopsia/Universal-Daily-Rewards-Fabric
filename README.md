@@ -1,6 +1,6 @@
 # Universal Daily Rewards
 
-![Version](https://img.shields.io/badge/version-4.0.0-blue.svg) ![Minecraft](https://img.shields.io/badge/minecraft-1.21.1-green.svg) ![License](https://img.shields.io/badge/license-MIT-yellow.svg) ![Platform](https://img.shields.io/badge/platform-Fabric-orange.svg) ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/SrKalopsia/universal-daily-rewards-fabric/build.yml?label=build)
+![Version](https://img.shields.io/badge/version-4.0.1-blue.svg) ![Minecraft](https://img.shields.io/badge/minecraft-1.21.1-green.svg) ![License](https://img.shields.io/badge/license-MIT-yellow.svg) ![Platform](https://img.shields.io/badge/platform-Fabric-orange.svg) ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/SrKalopsia/universal-daily-rewards-fabric/build.yml?label=build)
 
 This release marks a complete evolution and total overhaul from the original `daily-rewards-fabric` mod. Formerly known as Cobbleverse Daily Rewards, version 4.0.0 introduces a universal architecture designed for any Minecraft server.
 
@@ -14,7 +14,7 @@ This release marks a complete evolution and total overhaul from the original `da
 
 * 🚀 **100% Server-Side:** No client-side installation required. Powered by **Polymer**.
 * 🌍 **Native Localization (i18n):** Automatically adapts to the player's client language using **Server Translations API**.
-  * Currently supports **English** and **Spanish** (multiple variants).
+  * Currently supports **English**, **Spanish** (multiple variants), and now **Korean** natively.
   * Other languages will default to English.
   * 🤝 **Contributions Welcome:** If you'd like to help translate the mod into your language, feel free to open a Pull Request on our GitHub!
 * 📋 **Template System:** Quickly switch between reward sets using the `/rewards-setup load` command. It automatically detects any templates (including your own!) placed in the `config/rewards/templates/` folder.
