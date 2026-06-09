@@ -10,6 +10,12 @@ This release marks a complete evolution and total overhaul from the original `da
 
 📖 **[Click here to read the full CHANGELOG](CHANGELOG.md)**
 
+### 🌟 What's New in Version 4.1.0 (UI Overhaul)
+
+* 🎨 **Complete GUI Redesign:** We've completely upgraded the menu layout! Rewards are now beautifully displayed in a dynamic grid of up to 28 days per page, offering a much better visual progression for your players while fully retaining the classic multi-page support for endless streaks.
+* 📏 **Adaptive & Responsive Grid:** The interface automatically scales to fit your server's configuration! If you set up 7 days of rewards, it beautifully centers a single row of 7 slots. Configure 14 days, and it shows two rows, scaling dynamically up to a full 28-day grid. Got more than 28 days configured? The mod will automatically generate additional pages for you!
+* 🖼️ **New Custom Textures:** The mod now features an updated custom background texture that perfectly frames the new adaptive layout.
+
 ### ✨ Key Features (v4.0.0+)
 
 * 🚀 **100% Server-Side:** No client-side installation required. Powered by **Polymer**.
@@ -81,7 +87,7 @@ This release marks a complete evolution and total overhaul from the original `da
     </td>
     <td align="center" style="border: none; padding: 10px; vertical-align: top;">
       <img src="media/tooltip_playtime_1h.png" alt="1 Hour Playtime Reward Tooltip" width="85%"><br>
-      <small><strong>1 Hour (Already Claimed):</strong> Displays as claimed glass pane.</small>
+      <small><strong>1 Hour (Locked):</strong> Displays as locked glass pane.</small>
     </td>
   </tr>
   <tr style="border: none;">
