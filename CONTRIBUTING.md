@@ -26,7 +26,7 @@ Before creating bug reports, please check the existing issues to see if the prob
 
 * Minecraft version (e.g., 1.21.1)
 * Mod version (e.g., 4.0.1)
-* Fabric API and Polymer versions
+* Fabric API versions
 * A pastebin link to your server crash report or logs.
 
 ## 💻 Contributing Code
